@@ -62,13 +62,13 @@
                 // Načtení assetů
                 this.load.image('bg_level4', 'bg_level4.png');
                 
-                // Spritesheet s možným spacing/margin
-                // Zkusíme různé hodnoty aby seděly framy
+                // Spritesheet - nerovnoměrná mřížka, zkusíme průměrné hodnoty
+                // Vizuálně každý frame vypadá cca 220-235px široký, 300px vysoký
                 this.load.spritesheet('rabbit', 'rabbit_spritesheet.png', {
-                    frameWidth: 464,  // Zkusíme menší hodnotu
-                    frameHeight: 296, // Zkusíme menší hodnotu  
-                    margin: 0,        // Okraj kolem celého sheetu
-                    spacing: 8        // Mezera mezi framy (zkusíme 8px)
+                    frameWidth: 235,   // Průměrná šířka framu
+                    frameHeight: 300,  // Výška framu
+                    margin: 0,
+                    spacing: 0
                 });
             }
             
@@ -100,9 +100,9 @@
                 // Hráč - White Rabbit - začíná na podlaze
                 this.player = this.physics.add.sprite(220, groundY - 130, 'rabbit');
                 this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.55); // Lehce větší pro lepší viditelnost
-                this.player.body.setSize(280, 240); // Hitbox
-                this.player.body.setOffset(90, 40); // Offset na nohy
+                this.player.setScale(0.7); // Větší - aby byl lépe vidět
+                this.player.body.setSize(140, 220); // Hitbox menší a vyšší
+                this.player.body.setOffset(45, 60); // Offset na nohy/střed postavy
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -140,7 +140,10 @@
             }
             
             createAnimations() {
-                // Row 1 (index 0): Idle - frames 0-5
+                // SPRÁVNÉ frame indexy podle screenshotu:
+                // Celkem cca 12 framů na řádek, 5 řádků
+                
+                // Row 1 (Idle): frames 0-5
                 this.anims.create({
                     key: 'idle',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
@@ -151,34 +154,34 @@
                     repeat: -1
                 });
                 
-                // Row 2 (index 1): Run - frames 6-11
+                // Row 2+3 (Run): frames 12-23 (druhý a třetí řádek)
                 this.anims.create({
                     key: 'run',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 6, 
-                        end: 11 
+                        start: 12, 
+                        end: 23 
                     }),
                     frameRate: 12,
                     repeat: -1
                 });
                 
-                // Row 4 (index 3): Jump - frames 18-23
+                // Row 4 (Jump): frames 36-37 (čtvrtý řádek, jen 2 framy)
                 this.anims.create({
                     key: 'jump',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 18, 
-                        end: 23 
+                        start: 36, 
+                        end: 37 
                     }),
-                    frameRate: 10,
+                    frameRate: 8,
                     repeat: 0
                 });
                 
-                // Row 5 (index 4): Sit/Crash - frames 24-29
+                // Row 5 (Sit/Crash): frames 48-51 (pátý řádek, 4 framy)
                 this.anims.create({
                     key: 'crash',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 24, 
-                        end: 29 
+                        start: 48, 
+                        end: 51 
                     }),
                     frameRate: 8,
                     repeat: 0
