@@ -70,10 +70,11 @@
             create() {
                 const { width, height } = this.scale;
                 
-                // Pozadí - TileSprite pro scrollování
-                this.background = this.add.tileSprite(0, 0, width, height, 'bg_level4');
-                this.background.setOrigin(0, 0);
-                this.background.setDisplaySize(width, height);
+                // Pozadí - TileSprite pro scrollování (NESTRETCH - zachová pixel art)
+                // Spočítáme scale aby pozadí sedělo na výšku a nebylo rozmazané
+                const bgScale = height / 1536; // 1536 je původní výška pozadí
+                this.background = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_level4');
+                this.background.setScale(bgScale);
                 
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
@@ -92,11 +93,11 @@
                 }
                 
                 // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(200, groundY - 120, 'rabbit');
+                this.player = this.physics.add.sprite(200, groundY - 140, 'rabbit');
                 this.player.setCollideWorldBounds(false); // Nedržíme ho v bounds
-                this.player.setScale(0.6); // VĚTŠÍ - aby byl lépe vidět
-                this.player.body.setSize(200, 280); // Hitbox přizpůsobený sprite
-                this.player.body.setOffset(130, 10); // Centrování hitboxu
+                this.player.setScale(0.5); // Optimální velikost pro pixel art
+                this.player.body.setSize(300, 250); // Hitbox - širší a nižší
+                this.player.body.setOffset(80, 30); // Offset aby hitbox seděl na nohy
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
