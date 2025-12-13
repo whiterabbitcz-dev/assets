@@ -79,7 +79,7 @@
                 this.physics.world.gravity.y = 800;
                 
                 // Neviditelná podlaha - umístěná výše, aby byl králíček vidět
-                const groundY = height - 180; // Offset od spodní části obrazovky
+                const groundY = height - 280; // Výš - uprostřed obrazovky
                 
                 // Vytvoření podlahy pomocí graphics (lépe funguje s physics)
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
@@ -92,9 +92,9 @@
                 }
                 
                 // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(150, groundY - 80, 'rabbit');
+                this.player = this.physics.add.sprite(200, groundY - 120, 'rabbit');
                 this.player.setCollideWorldBounds(false); // Nedržíme ho v bounds
-                this.player.setScale(0.4); // Zmenšení velkého spritesheet
+                this.player.setScale(0.6); // VĚTŠÍ - aby byl lépe vidět
                 this.player.body.setSize(200, 280); // Hitbox přizpůsobený sprite
                 this.player.body.setOffset(130, 10); // Centrování hitboxu
                 
