@@ -78,8 +78,8 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha
-                const groundY = height - 100; // Offset od spodní části obrazovky
+                // Neviditelná podlaha - umístěná výše, aby byl králíček vidět
+                const groundY = height - 150; // Offset od spodní části obrazovky
                 this.ground = this.add.rectangle(width / 2, groundY, width, 20, 0xff0000, 0);
                 this.physics.add.existing(this.ground, true); // Static body
                 
@@ -88,8 +88,8 @@
                     this.ground.setAlpha(0.3);
                 }
                 
-                // Hráč - White Rabbit
-                this.player = this.physics.add.sprite(150, groundY - 100, 'rabbit');
+                // Hráč - White Rabbit - začíná na podlaze
+                this.player = this.physics.add.sprite(150, groundY - 50, 'rabbit');
                 this.player.setCollideWorldBounds(false); // Dovolíme mu jít mimo obrazovku vertikálně
                 this.player.setScale(2); // Zvětšení pro lepší viditelnost
                 
