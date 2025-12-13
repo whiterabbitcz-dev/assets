@@ -43,7 +43,7 @@
     
     <script>
         // Debug mode - nastavte na true pro zobrazení frame rámečků
-        const DEBUG_MODE = false;
+        const DEBUG_MODE = true;
         
         class Level4Scene extends Phaser.Scene {
             constructor() {
@@ -62,8 +62,8 @@
                 // Načtení assetů
                 this.load.image('bg_level4', 'bg_level4.png');
                 this.load.spritesheet('rabbit', 'rabbit_spritesheet.png', {
-                    frameWidth: 64,  // 6 sloupců - upravte podle skutečné velikosti
-                    frameHeight: 64  // 5 řádků - upravte podle skutečné velikosti
+                    frameWidth: 469,  // 2816 ÷ 6 = 469.33
+                    frameHeight: 301  // 1504 ÷ 5 = 300.8
                 });
             }
             
@@ -79,19 +79,24 @@
                 this.physics.world.gravity.y = 800;
                 
                 // Neviditelná podlaha - umístěná výše, aby byl králíček vidět
-                const groundY = height - 150; // Offset od spodní části obrazovky
-                this.ground = this.add.rectangle(width / 2, groundY, width, 20, 0xff0000, 0);
-                this.physics.add.existing(this.ground, true); // Static body
+                const groundY = height - 180; // Offset od spodní části obrazovky
                 
-                // Debug zobrazení podlahy (volitelné)
+                // Vytvoření podlahy pomocí graphics (lépe funguje s physics)
+                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
+                this.physics.add.existing(this.ground, true); // Static body
+                this.ground.body.setSize(width * 2, 50); // Nastavení velikosti physics body
+                
+                // Debug zobrazení podlahy
                 if (DEBUG_MODE) {
-                    this.ground.setAlpha(0.3);
+                    this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
                 // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(150, groundY - 50, 'rabbit');
-                this.player.setCollideWorldBounds(false); // Dovolíme mu jít mimo obrazovku vertikálně
-                this.player.setScale(2); // Zvětšení pro lepší viditelnost
+                this.player = this.physics.add.sprite(150, groundY - 80, 'rabbit');
+                this.player.setCollideWorldBounds(false); // Nedržíme ho v bounds
+                this.player.setScale(0.4); // Zmenšení velkého spritesheet
+                this.player.body.setSize(200, 280); // Hitbox přizpůsobený sprite
+                this.player.body.setOffset(130, 10); // Centrování hitboxu
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -228,8 +233,8 @@
                     ]);
                 }
                 
-                // Detekce pádu mimo obrazovku (volitelné - pro game over)
-                if (this.player.y > this.scale.height + 100) {
+                // Detekce pádu mimo obrazovku - jen pokud spadne HODNĚ dole
+                if (this.player.y > this.scale.height + 300) {
                     this.triggerGameOver();
                 }
             }
