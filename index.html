@@ -61,9 +61,14 @@
             preload() {
                 // Načtení assetů
                 this.load.image('bg_level4', 'bg_level4.png');
+                
+                // Spritesheet s možným spacing/margin
+                // Zkusíme různé hodnoty aby seděly framy
                 this.load.spritesheet('rabbit', 'rabbit_spritesheet.png', {
-                    frameWidth: 469,  // 2816 ÷ 6 = 469.33
-                    frameHeight: 301  // 1504 ÷ 5 = 300.8
+                    frameWidth: 464,  // Zkusíme menší hodnotu
+                    frameHeight: 296, // Zkusíme menší hodnotu  
+                    margin: 0,        // Okraj kolem celého sheetu
+                    spacing: 8        // Mezera mezi framy (zkusíme 8px)
                 });
             }
             
@@ -79,8 +84,8 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha - umístěná výše, aby byl králíček vidět
-                const groundY = height - 280; // Výš - uprostřed obrazovky
+                // Neviditelná podlaha - umístěná výše, aby byl králíček vidět  
+                const groundY = height - 250; // Pozice podlahy
                 
                 // Vytvoření podlahy pomocí graphics (lépe funguje s physics)
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
@@ -93,11 +98,11 @@
                 }
                 
                 // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(200, groundY - 140, 'rabbit');
-                this.player.setCollideWorldBounds(false); // Nedržíme ho v bounds
-                this.player.setScale(0.5); // Optimální velikost pro pixel art
-                this.player.body.setSize(300, 250); // Hitbox - širší a nižší
-                this.player.body.setOffset(80, 30); // Offset aby hitbox seděl na nohy
+                this.player = this.physics.add.sprite(220, groundY - 130, 'rabbit');
+                this.player.setCollideWorldBounds(false);
+                this.player.setScale(0.55); // Lehce větší pro lepší viditelnost
+                this.player.body.setSize(280, 240); // Hitbox
+                this.player.body.setOffset(90, 40); // Offset na nohy
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
