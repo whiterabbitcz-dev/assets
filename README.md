@@ -4,9 +4,7 @@
 
 ## 🎮 Hrát online
 
-**[Hrát hru zde](https://VASE-GITHUB-USERNAME.github.io/REPOSITORY-NAME/)**
-
-_(Po nahrání na GitHub nahraďte link výše vaším skutečným odkazem)_
+**[Hrát hru zde](https://whiterabbitcz-dev.github.io/assets/)**
 
 ## 📖 O hře
 
