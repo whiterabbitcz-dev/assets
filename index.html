@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>White Rabbit: Social Sprint - Level 4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #2d1b4e;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #game-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    
+    <!-- Phaser 3 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+    
+    <script>
+        // Debug mode - nastavte na true pro zobrazení frame rámečků
+        const DEBUG_MODE = false;
+        
+        class Level4Scene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'Level4Scene' });
+                this.player = null;
+                this.background = null;
+                this.ground = null;
+                this.cursors = null;
+                this.jumpCount = 0;
+                this.maxJumps = 2; // Double jump
+                this.bgScrollSpeed = 3;
+                this.gameOver = false;
+            }
+            
+            preload() {
+                // Načtení assetů
+                this.load.image('bg_level4', 'bg_level4.png');
+                this.load.spritesheet('rabbit', 'rabbit_spritesheet.png', {
+                    frameWidth: 64,  // 6 sloupců - upravte podle skutečné velikosti
+                    frameHeight: 64  // 5 řádků - upravte podle skutečné velikosti
+                });
+            }
+            
+            create() {
+                const { width, height } = this.scale;
+                
+                // Pozadí - TileSprite pro scrollování
+                this.background = this.add.tileSprite(0, 0, width, height, 'bg_level4');
+                this.background.setOrigin(0, 0);
+                this.background.setDisplaySize(width, height);
+                
+                // Arcade Physics
+                this.physics.world.gravity.y = 800;
+                
+                // Neviditelná podlaha
+                const groundY = height - 100; // Offset od spodní části obrazovky
+                this.ground = this.add.rectangle(width / 2, groundY, width, 20, 0xff0000, 0);
+                this.physics.add.existing(this.ground, true); // Static body
+                
+                // Debug zobrazení podlahy (volitelné)
+                if (DEBUG_MODE) {
+                    this.ground.setAlpha(0.3);
+                }
+                
+                // Hráč - White Rabbit
+                this.player = this.physics.add.sprite(150, groundY - 100, 'rabbit');
+                this.player.setCollideWorldBounds(false); // Dovolíme mu jít mimo obrazovku vertikálně
+                this.player.setScale(2); // Zvětšení pro lepší viditelnost
+                
+                // Debug rámečky
+                if (DEBUG_MODE) {
+                    this.player.setDebug(true, true, 0x00ff00);
+                }
+                
+                // Kolize s podlahou
+                this.physics.add.collider(this.player, this.ground, () => {
+                    this.jumpCount = 0; // Reset skoků při dotyku se zemí
+                });
+                
+                // Animace
+                this.createAnimations();
+                
+                // Spuštění běhací animace
+                this.player.anims.play('run', true);
+                
+                // Ovládání - Desktop
+                this.cursors = this.input.keyboard.createCursorKeys();
+                this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+                
+                // Ovládání - Mobile (tap)
+                this.input.on('pointerdown', () => {
+                    this.jump();
+                });
+                
+                // FPS debug text (volitelné)
+                if (DEBUG_MODE) {
+                    this.debugText = this.add.text(10, 10, '', {
+                        fontSize: '16px',
+                        color: '#00ff00',
+                        backgroundColor: '#000000'
+                    });
+                }
+            }
+            
+            createAnimations() {
+                // Row 1 (index 0): Idle - frames 0-5
+                this.anims.create({
+                    key: 'idle',
+                    frames: this.anims.generateFrameNumbers('rabbit', { 
+                        start: 0, 
+                        end: 5 
+                    }),
+                    frameRate: 8,
+                    repeat: -1
+                });
+                
+                // Row 2 (index 1): Run - frames 6-11
+                this.anims.create({
+                    key: 'run',
+                    frames: this.anims.generateFrameNumbers('rabbit', { 
+                        start: 6, 
+                        end: 11 
+                    }),
+                    frameRate: 12,
+                    repeat: -1
+                });
+                
+                // Row 4 (index 3): Jump - frames 18-23
+                this.anims.create({
+                    key: 'jump',
+                    frames: this.anims.generateFrameNumbers('rabbit', { 
+                        start: 18, 
+                        end: 23 
+                    }),
+                    frameRate: 10,
+                    repeat: 0
+                });
+                
+                // Row 5 (index 4): Sit/Crash - frames 24-29
+                this.anims.create({
+                    key: 'crash',
+                    frames: this.anims.generateFrameNumbers('rabbit', { 
+                        start: 24, 
+                        end: 29 
+                    }),
+                    frameRate: 8,
+                    repeat: 0
+                });
+            }
+            
+            jump() {
+                if (this.gameOver) return;
+                
+                // Kontrola double jump
+                if (this.jumpCount < this.maxJumps) {
+                    this.player.setVelocityY(-400);
+                    this.jumpCount++;
+                    
+                    // Přehrání jump animace
+                    if (this.player.anims.currentAnim.key !== 'jump') {
+                        this.player.anims.play('jump', true);
+                    }
+                }
+            }
+            
+            update() {
+                if (this.gameOver) return;
+                
+                // Scrollování pozadí doleva
+                this.background.tilePositionX += this.bgScrollSpeed;
+                
+                // Ovládání skoků
+                if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
+                    Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+                    this.jump();
+                }
+                
+                // Animace podle stavu
+                if (this.player.body.touching.down) {
+                    // Na zemi - běží
+                    if (this.player.anims.currentAnim.key !== 'run') {
+                        this.player.anims.play('run', true);
+                    }
+                } else {
+                    // Ve vzduchu - jump animace
+                    if (this.player.anims.currentAnim.key !== 'jump') {
+                        this.player.anims.play('jump', true);
+                    }
+                }
+                
+                // Debug info
+                if (DEBUG_MODE && this.debugText) {
+                    const fps = Math.round(this.game.loop.actualFps);
+                    this.debugText.setText([
+                        `FPS: ${fps}`,
+                        `Player Y: ${Math.round(this.player.y)}`,
+                        `Velocity Y: ${Math.round(this.player.body.velocity.y)}`,
+                        `Jump Count: ${this.jumpCount}`,
+                        `On Ground: ${this.player.body.touching.down}`,
+                        `Current Anim: ${this.player.anims.currentAnim ? this.player.anims.currentAnim.key : 'none'}`,
+                        `Frame: ${this.player.anims.currentFrame ? this.player.anims.currentFrame.index : 'none'}`
+                    ]);
+                }
+                
+                // Detekce pádu mimo obrazovku (volitelné - pro game over)
+                if (this.player.y > this.scale.height + 100) {
+                    this.triggerGameOver();
+                }
+            }
+            
+            triggerGameOver() {
+                if (this.gameOver) return;
+                
+                this.gameOver = true;
+                this.player.anims.play('crash', true);
+                
+                // Zobrazení Game Over textu
+                const { width, height } = this.scale;
+                const gameOverText = this.add.text(width / 2, height / 2, 'GAME OVER', {
+                    fontSize: '64px',
+                    color: '#ff0000',
+                    fontStyle: 'bold',
+                    stroke: '#000000',
+                    strokeThickness: 6
+                });
+                gameOverText.setOrigin(0.5);
+                
+                const restartText = this.add.text(width / 2, height / 2 + 80, 'Tap or Press SPACE to Restart', {
+                    fontSize: '24px',
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 4
+                });
+                restartText.setOrigin(0.5);
+                
+                // Restart po 2 sekundách
+                this.time.delayedCall(2000, () => {
+                    this.input.once('pointerdown', () => this.scene.restart());
+                    this.input.keyboard.once('keydown-SPACE', () => this.scene.restart());
+                });
+            }
+        }
+        
+        // Konfigurace Phaser hry
+        const config = {
+            type: Phaser.AUTO,
+            parent: 'game-container',
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: 1280,
+                height: 720
+            },
+            backgroundColor: '#2d1b4e',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 }, // Nastaveno ve scéně
+                    debug: DEBUG_MODE
+                }
+            },
+            scene: [Level4Scene]
+        };
+        
+        // Spuštění hry
+        const game = new Phaser.Game(config);
+        
+        // Prevence scrollování na mobile při swipe
+        document.body.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
+
