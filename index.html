@@ -76,18 +76,14 @@
             create() {
                 const { width, height } = this.scale;
                 
-                // Background layer (dálka) - TileSprite pro scrollování
-                // Rozměry: 1201×529, škálujeme aby seděl na výšku
-                const bgHeight = 529;
-                const bgScale = height / bgHeight; // Fit na výšku obrazovky
-                this.background = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_background');
-                this.background.setScale(bgScale);
+                // Background layer - 1:1 bez škálování (1201×529)
+                this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
                 
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha - podle placement obrázku cca uprostřed/spodní část
-                const groundY = height - 180; // Pozice podlahy (upravíme podle placement)
+                // Neviditelná podlaha - podle placement obrázku
+                const groundY = height - 100; // Spodní část
                 
                 // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
@@ -100,13 +96,10 @@
                 }
                 
                 // Hráč - White Rabbit - podle placement obrázku
-                // Z obrázku vidím že je cca na X=520px, Y=300px z 1201×529
-                const playerXPercent = 520 / 1201; // Relativní pozice
-                const playerYPercent = 300 / 529;
-                
-                this.player = this.physics.add.sprite(width * playerXPercent, height * playerYPercent, 'rabbit');
+                // Z placement: cca X=520px, Y=300px z 1201×529
+                this.player = this.physics.add.sprite(520, 300, 'rabbit');
                 this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.35); // Scale podle placement obrázku
+                this.player.setScale(0.35); // Scale podle placement
                 this.player.body.setSize(300, 400);
                 this.player.body.setOffset(105, 90);
                 
@@ -126,10 +119,8 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer (popředí) - PŘES hráče
-                // Scrolluje rychleji než background pro parallax efekt
-                this.foreground = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_foreground');
-                this.foreground.setScale(bgScale);
+                // Foreground layer - 1:1 bez škálování, PŘES hráče
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
                 this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
@@ -303,10 +294,10 @@
             scale: {
                 mode: Phaser.Scale.FIT,
                 autoCenter: Phaser.Scale.CENTER_BOTH,
-                width: 1280,
-                height: 720
+                width: 1201,  // Přesné rozměry pozadí 1:1
+                height: 529   // Přesné rozměry pozadí 1:1
             },
-            backgroundColor: '#2d1b4e',
+            backgroundColor: '#000000', // Černý prostor kolem
             pixelArt: true, // Zachová ostrost pixel art grafiky
             antialias: false, // Vypne antialiasing pro pixel art
             roundPixels: true, // Zaokrouhlí pozice na celé pixely
