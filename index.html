@@ -94,17 +94,18 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - JEDNODUŠE: dáme ho výš a větší hitbox
+                // Hráč - vycentrován na hitbox
                 const playerScale = 0.75;
                 
-                // X: střed, Y: tak aby stál na zemi
-                this.player = this.physics.add.sprite(width / 2, 270, 'rabbit');
+                // X: střed, Y: upraveno aby sprite byl uprostřed hitboxu
+                // Posuneme dolů aby sprite vizuálně seděl v zeleném obdélníku
+                this.player = this.physics.add.sprite(width / 2, 360, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - VĚTŠÍ aby určitě dosáhl na ground
-                this.player.body.setSize(200, 250); // Větší výška hitboxu
-                this.player.body.setOffset(156, 240); // Offset aby spodek byl u nohou
+                // Hitbox - větší aby dosáhl na ground
+                this.player.body.setSize(200, 250);
+                this.player.body.setOffset(156, 240);
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
