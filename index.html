@@ -97,9 +97,10 @@
                 
                 // Hráč - White Rabbit - podle placement obrázku
                 // Z placement: cca X=520px, Y=300px z 1201×529
+                // Výška postavičky má být 260px
                 this.player = this.physics.add.sprite(520, 300, 'rabbit');
                 this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.35); // Scale podle placement
+                this.player.setScale(0.51); // 260px výška (512 × 0.51 = 261px)
                 this.player.body.setSize(300, 400);
                 this.player.body.setOffset(105, 90);
                 
