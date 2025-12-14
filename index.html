@@ -81,8 +81,8 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Podlaha - nohy 70px od spodního okraje = Y=459
-                const groundY = 459;
+                // Podlaha VÝŠE - aby postavička měla kam stát
+                const groundY = 420;
                 
                 // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 20, 0xff0000, 0);
@@ -94,18 +94,17 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - vycentrován na hitbox
+                // Hráč - JEDNODUŠE bez složitých offsetů
                 const playerScale = 0.75;
                 
-                // X: střed, Y: upraveno aby sprite byl uprostřed hitboxu
-                // Posuneme dolů aby sprite vizuálně seděl v zeleném obdélníku
-                this.player = this.physics.add.sprite(width / 2, 360, 'rabbit');
+                // Umístíme ho nad podlahu
+                this.player = this.physics.add.sprite(width / 2, 280, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - větší aby dosáhl na ground
-                this.player.body.setSize(200, 250);
-                this.player.body.setOffset(156, 240);
+                // Hitbox - ŽÁDNÝ offset, jen zmenšíme
+                // Phaser automaticky vycentruje hitbox
+                this.player.body.setSize(250, 300); // Větší hitbox, bez offsetu
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
