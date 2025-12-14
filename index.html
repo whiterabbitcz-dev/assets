@@ -97,17 +97,17 @@
                 
                 // Hráč - větší scale
                 const playerScale = 0.75;
-                const playerHeight = 512 * playerScale; // ~384px
                 
-                // Pozice Y: groundY mínus polovina výšky = centrum sprite
-                this.player = this.physics.add.sprite(150, groundY - playerHeight/2, 'rabbit');
+                // Pozice Y tak, aby SPODEK hitboxu byl na groundY
+                // Hitbox: offset 330, size 180 → spodek je na: playerY + (330 + 180 - 256) = playerY + 254
+                // Chceme: playerY + 254 = groundY → playerY = groundY - 254
+                this.player = this.physics.add.sprite(150, groundY - 254, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - jednoduchý přístup: celý sprite, pak ho posuneme
-                // Zmenšíme hitbox na tělo a posuneme ho dolů
-                this.player.body.setSize(180, 180); // Malý čtvercový hitbox
-                this.player.body.setOffset(166, 320); // Offset tak, aby byl u nohou
+                // Hitbox - malý čtvercový na tělo, posun dolů
+                this.player.body.setSize(180, 180);
+                this.player.body.setOffset(166, 330); // Offset dolů, aby spodek byl u nohou
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -125,10 +125,11 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - zmenšen na 80%
-                // Když je scale 0.8, musíme zvětšit tileSize aby pokryl celou obrazovku
+                // Foreground layer - zmenšen na 80%, UMÍSTĚN DOLE
                 const fgScale = 0.8;
-                this.foreground = this.add.tileSprite(width / 2, height / 2, width / fgScale, height / fgScale, 'bg_foreground');
+                const fgHeight = 529 * fgScale; // Výška foreground po scale
+                // Umístíme ho dolů: Y = height - (fgHeight/2)
+                this.foreground = this.add.tileSprite(width / 2, height - fgHeight/2, width / fgScale, height / fgScale, 'bg_foreground');
                 this.foreground.setScale(fgScale);
                 this.foreground.setDepth(100); // Nad hráčem
                 
