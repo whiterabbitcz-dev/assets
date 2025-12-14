@@ -82,8 +82,9 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha - oranžový pás
-                const groundY = 390;
+                // Podlaha - podle měření: nohy 70px od spodního okraje
+                // 529 - 70 = 459px (pozice nohou)
+                const groundY = 459;
                 
                 // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
@@ -95,15 +96,15 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - White Rabbit
-                this.player = this.physics.add.sprite(520, 250, 'rabbit');
+                // Hráč - podle měření: 150px zleva, nohy na 459px
+                // Postavička je 260px vysoká, takže centrum je 130px nad nohama
+                this.player = this.physics.add.sprite(150, groundY - 130, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(0.51); // 260px výška
                 
-                // Hitbox - jednoduchý, centrovaný, menší než sprite
-                // V PŮVODNÍCH pixelech (před škálováním)
-                this.player.body.setSize(256, 400); // Poloviční šířka, většina výšky
-                this.player.body.setOffset(128, 100); // Centrováno
+                // Hitbox - v původních pixelech sprite (512×512)
+                this.player.body.setSize(200, 480); // Úzký, vysoký
+                this.player.body.setOffset(156, 20); // Centrovaný, spodek u nohou
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -294,19 +295,19 @@
             type: Phaser.AUTO,
             parent: 'game-container',
             scale: {
-                mode: Phaser.Scale.FIT,
+                mode: Phaser.Scale.NONE, // Žádné škálování - vždy 1:1
                 autoCenter: Phaser.Scale.CENTER_BOTH,
-                width: 1201,  // Přesné rozměry pozadí 1:1
-                height: 529   // Přesné rozměry pozadí 1:1
+                width: 1201,  // Přesné rozměry 1:1
+                height: 529
             },
             backgroundColor: '#000000', // Černý prostor kolem
-            pixelArt: true, // Zachová ostrost pixel art grafiky
-            antialias: false, // Vypne antialiasing pro pixel art
-            roundPixels: true, // Zaokrouhlí pozice na celé pixely
+            pixelArt: true,
+            antialias: false,
+            roundPixels: true,
             physics: {
                 default: 'arcade',
                 arcade: {
-                    gravity: { y: 0 }, // Nastaveno ve scéně
+                    gravity: { y: 0 },
                     debug: DEBUG_MODE
                 }
             },
