@@ -59,9 +59,8 @@
             }
             
             preload() {
-                // Načtení assetů - background a foreground
+                // Načtení assetů - background
                 this.load.image('bg_background', 'bg_level4_background.png');
-                this.load.image('bg_foreground', 'bg_level4_foreground.png');
                 
                 // Nový spritesheet 6×6 grid (3072×3072px)
                 // Každý frame: 512×512px - pravidelný grid!
@@ -122,13 +121,6 @@
                 
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
-                
-                // Foreground layer - PŘESNĚ stejně jako background (1:1)
-                // Žádné posuny, stejná pozice
-                const fgScale = 0.8;
-                this.foreground = this.add.tileSprite(width / 2, height / 2, width / fgScale, height / fgScale, 'bg_foreground');
-                this.foreground.setScale(fgScale);
-                this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
                 this.cursors = this.input.keyboard.createCursorKeys();
@@ -218,9 +210,8 @@
             update() {
                 if (this.gameOver) return;
                 
-                // Parallax scrollování - background pomaleji, foreground pomaleji
+                // Scrollování pozadí
                 this.background.tilePositionX += this.bgScrollSpeed * 0.5; // 50% rychlosti
-                this.foreground.tilePositionX += this.bgScrollSpeed * 1.0; // 100% rychlosti (zpomaleno z 150%)
                 
                 // Ovládání skoků
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
