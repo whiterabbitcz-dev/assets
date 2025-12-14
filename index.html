@@ -83,28 +83,35 @@
                 this.physics.world.gravity.y = 800;
                 
                 // Podlaha - podle měření: nohy 70px od spodního okraje
-                // 529 - 70 = 459px (pozice nohou)
+                // 529 - 70 = 459px (Y pozice kde mají být nohy)
                 const groundY = 459;
                 
                 // Vytvoření podlahy
-                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
+                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 20, 0xff0000, 0);
                 this.physics.add.existing(this.ground, true);
-                this.ground.body.setSize(width * 2, 50);
+                this.ground.body.setSize(width * 2, 20);
                 
                 // Debug zobrazení podlahy
                 if (DEBUG_MODE) {
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - podle měření: 150px zleva, nohy na 459px
-                // Postavička je 260px vysoká, takže centrum je 130px nad nohama
-                this.player = this.physics.add.sprite(150, groundY - 130, 'rabbit');
-                this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.51); // 260px výška
+                // Hráč - 150px zleva, 260px vysoký
+                // Pokud má být 260px vysoký a nohy na 459px, pak:
+                // Sprite 512px × scale = 260px → scale = 0.508
+                // Center sprite je uprostřed, takže Y = groundY - (260/2) = 459 - 130 = 329
+                const playerScale = 0.508;
+                const playerHeight = 512 * playerScale; // ~260px
                 
-                // Hitbox - v původních pixelech sprite (512×512)
-                this.player.body.setSize(200, 480); // Úzký, vysoký
-                this.player.body.setOffset(156, 20); // Centrovaný, spodek u nohou
+                this.player = this.physics.add.sprite(150, groundY - playerHeight/2, 'rabbit');
+                this.player.setCollideWorldBounds(false);
+                this.player.setScale(playerScale);
+                
+                // Hitbox - musí být v původních pixelech (512×512)
+                // Chceme aby spodek hitboxu byl u nohou sprite
+                // Sprite center je uprostřed (256, 256), nohy jsou dole (cca Y=480 v původním)
+                this.player.body.setSize(220, 240); // Úzký hitbox na tělo
+                this.player.body.setOffset(146, 260); // Offset aby spodek byl u nohou
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
