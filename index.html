@@ -142,8 +142,8 @@
             createAnimations() {
                 // Frame indexy podle uživatele (ale od 0):
                 // Idle: 1-6 → frames 0-5
-                // Jump: 13-22 → frames 12-21
-                // Run: 23-36 → frames 22-35
+                // Jump: 13-21 → frames 12-20
+                // Run: 25-36 → frames 24-35
                 
                 // Idle - stojí
                 this.anims.create({
@@ -156,22 +156,22 @@
                     repeat: -1
                 });
                 
-                // Jump - skok (10 framů)
+                // Jump - skok (9 framů)
                 this.anims.create({
                     key: 'jump',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
                         start: 12, 
-                        end: 21 
+                        end: 20 
                     }),
                     frameRate: 12,
                     repeat: 0
                 });
                 
-                // Run - běh (14 framů)
+                // Run - běh (12 framů)
                 this.anims.create({
                     key: 'run',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 22, 
+                        start: 24, 
                         end: 35 
                     }),
                     frameRate: 20, // Rychlejší pro plynulý běh
