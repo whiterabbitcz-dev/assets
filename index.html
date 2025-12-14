@@ -76,8 +76,8 @@
                 const { width, height } = this.scale;
                 
                 // Pozadí - TileSprite pro scrollování (NESTRETCH - zachová pixel art)
-                // Spočítáme scale aby pozadí sedělo na výšku a nebylo rozmazané
-                const bgScale = height / 1536; // 1536 je původní výška pozadí
+                // Spočítáme scale - zmenšíme na 85% pro lepší perspektivu
+                const bgScale = (height / 1536) * 0.85; // Zmenšeno na 85%
                 this.background = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_level4');
                 this.background.setScale(bgScale);
                 
