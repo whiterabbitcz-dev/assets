@@ -82,8 +82,7 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Podlaha - podle měření: nohy 70px od spodního okraje
-                // 529 - 70 = 459px (Y pozice kde mají být nohy)
+                // Podlaha - nohy 70px od spodního okraje
                 const groundY = 459;
                 
                 // Vytvoření podlahy
@@ -96,22 +95,20 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - 150px zleva, 260px vysoký
-                // Pokud má být 260px vysoký a nohy na 459px, pak:
-                // Sprite 512px × scale = 260px → scale = 0.508
-                // Center sprite je uprostřed, takže Y = groundY - (260/2) = 459 - 130 = 329
-                const playerScale = 0.508;
-                const playerHeight = 512 * playerScale; // ~260px
+                // Hráč - VĚTŠÍ pro správné proporce k pozadí
+                const playerScale = 0.65; // Zvětšeno z 0.508
+                const playerHeight = 512 * playerScale; // ~333px
                 
+                // Pozice: 150px zleva, centrum tak aby nohy byly na groundY
                 this.player = this.physics.add.sprite(150, groundY - playerHeight/2, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - musí být v původních pixelech (512×512)
-                // Chceme aby spodek hitboxu byl u nohou sprite
-                // Sprite center je uprostřed (256, 256), nohy jsou dole (cca Y=480 v původním)
-                this.player.body.setSize(220, 240); // Úzký hitbox na tělo
-                this.player.body.setOffset(146, 260); // Offset aby spodek byl u nohou
+                // Hitbox - MUSÍ být offset tak, aby spodek hitboxu byl U NOHOU sprite
+                // Sprite má 512px, nohy jsou cca na Y=480 (v původních pixelech)
+                // Takže offset Y musí být tak, aby hitbox končil dole
+                this.player.body.setSize(230, 200); // Menší hitbox na tělo
+                this.player.body.setOffset(141, 300); // Offset DOLŮ - spodek hitboxu u nohou
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
