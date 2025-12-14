@@ -140,16 +140,12 @@
             }
             
             createAnimations() {
-                // Grid 6×6 = 36 framů celkem
-                // Z obrázku vidím:
-                // Row 1 (0-5): Idle (stojí)
-                // Row 2 (6-11): Run začátek
-                // Row 3 (12-17): Run pokračování
-                // Row 4 (18-23): Run pokračování
-                // Row 5 (24-29): Run pokračování  
-                // Row 6 (30-35): Run konec
+                // Frame indexy podle uživatele (ale od 0):
+                // Idle: 1-6 → frames 0-5
+                // Jump: 7-21 → frames 6-20
+                // Run: 22-36 → frames 21-35
                 
-                // Idle - první řádek
+                // Idle - stojí
                 this.anims.create({
                     key: 'idle',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
@@ -160,33 +156,33 @@
                     repeat: -1
                 });
                 
-                // Run - řádky 2-6 (všechny běhací framy)
+                // Jump - skok (15 framů!)
+                this.anims.create({
+                    key: 'jump',
+                    frames: this.anims.generateFrameNumbers('rabbit', { 
+                        start: 6, 
+                        end: 20 
+                    }),
+                    frameRate: 12,
+                    repeat: 0
+                });
+                
+                // Run - běh (15 framů!)
                 this.anims.create({
                     key: 'run',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 6, 
+                        start: 21, 
                         end: 35 
                     }),
                     frameRate: 20, // Rychlejší pro plynulý běh
                     repeat: -1
                 });
                 
-                // Jump - použijeme framy z běhu (dočasně)
-                this.anims.create({
-                    key: 'jump',
-                    frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 12, 
-                        end: 17 
-                    }),
-                    frameRate: 10,
-                    repeat: 0
-                });
-                
-                // Crash - poslední řádek
+                // Crash - použijeme poslední framy běhu
                 this.anims.create({
                     key: 'crash',
                     frames: this.anims.generateFrameNumbers('rabbit', { 
-                        start: 30, 
+                        start: 33, 
                         end: 35 
                     }),
                     frameRate: 8,
