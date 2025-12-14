@@ -95,20 +95,20 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - VĚTŠÍ pro správné proporce k pozadí
-                const playerScale = 0.65; // Zvětšeno z 0.508
-                const playerHeight = 512 * playerScale; // ~333px
+                // Hráč - JEŠTĚ VĚTŠÍ
+                const playerScale = 0.75; // Zvětšeno z 0.65
+                const playerHeight = 512 * playerScale; // ~384px
                 
-                // Pozice: 150px zleva, centrum tak aby nohy byly na groundY
+                // Pozice: 150px zleva
                 this.player = this.physics.add.sprite(150, groundY - playerHeight/2, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - MUSÍ být offset tak, aby spodek hitboxu byl U NOHOU sprite
-                // Sprite má 512px, nohy jsou cca na Y=480 (v původních pixelech)
-                // Takže offset Y musí být tak, aby hitbox končil dole
-                this.player.body.setSize(230, 200); // Menší hitbox na tělo
-                this.player.body.setOffset(141, 300); // Offset DOLŮ - spodek hitboxu u nohou
+                // Hitbox - spodek PŘESNĚ na groundY (na červené čáře)
+                // Size: menší hitbox na tělo
+                // Offset Y: posuneme tak, aby offset + size = 512 (konec sprite)
+                this.player.body.setSize(240, 220); // Hitbox na tělo
+                this.player.body.setOffset(136, 292); // 292 + 220 = 512 (spodek u nohou)
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -126,8 +126,9 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - 1:1 bez škálování, PŘES hráče
-                this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
+                // Foreground layer - ZMENŠEN na 80% (0.8 scale)
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width / 0.8, height / 0.8, 'bg_foreground');
+                this.foreground.setScale(0.8); // Zmenšeno o 20%
                 this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
@@ -218,9 +219,9 @@
             update() {
                 if (this.gameOver) return;
                 
-                // Parallax scrollování - background pomaleji, foreground rychleji
+                // Parallax scrollování - background pomaleji, foreground pomaleji
                 this.background.tilePositionX += this.bgScrollSpeed * 0.5; // 50% rychlosti
-                this.foreground.tilePositionX += this.bgScrollSpeed * 1.5; // 150% rychlosti
+                this.foreground.tilePositionX += this.bgScrollSpeed * 1.0; // 100% rychlosti (zpomaleno z 150%)
                 
                 // Ovládání skoků
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
