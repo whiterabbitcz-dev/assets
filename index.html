@@ -125,11 +125,10 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - zmenšen na 80%, UMÍSTĚN DOLE
+                // Foreground layer - STEJNÉ umístění jako background
+                // Je to stejně velký soubor, jen objekty jsou dole
                 const fgScale = 0.8;
-                const fgHeight = 529 * fgScale; // Výška foreground po scale
-                // Umístíme ho dolů: Y = height - (fgHeight/2)
-                this.foreground = this.add.tileSprite(width / 2, height - fgHeight/2, width / fgScale, height / fgScale, 'bg_foreground');
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width / fgScale, height / fgScale, 'bg_foreground');
                 this.foreground.setScale(fgScale);
                 this.foreground.setDepth(100); // Nad hráčem
                 
