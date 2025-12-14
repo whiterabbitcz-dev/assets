@@ -62,11 +62,11 @@
                 // Načtení assetů
                 this.load.image('bg_level4', 'bg_level4.png');
                 
-                // Nový spritesheet 6×6 grid
-                // Rozměry: 2816×1504, Grid: 6×6
+                // Nový spritesheet 6×6 grid (3072×3072px)
+                // Každý frame: 512×512px - pravidelný grid!
                 this.load.spritesheet('rabbit', 'rabbit_spritesheet.png', {
-                    frameWidth: 469,   // 2816 ÷ 6
-                    frameHeight: 251,  // 1504 ÷ 6 (zaokrouhleno)
+                    frameWidth: 512,
+                    frameHeight: 512,
                     margin: 0,
                     spacing: 0
                 });
@@ -98,11 +98,11 @@
                 }
                 
                 // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(220, groundY - 100, 'rabbit');
+                this.player = this.physics.add.sprite(220, groundY - 120, 'rabbit');
                 this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.5); // Scale pro nový spritesheet
-                this.player.body.setSize(280, 200); // Hitbox - širší než vysoký
-                this.player.body.setOffset(90, 40); // Offset na nohy
+                this.player.setScale(0.35); // Menší scale protože frame je 512px
+                this.player.body.setSize(300, 400); // Hitbox pro 512px frame
+                this.player.body.setOffset(105, 90); // Offset na nohy
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
