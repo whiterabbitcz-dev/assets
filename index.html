@@ -81,8 +81,8 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Podlaha VÝŠE - aby postavička měla kam stát
-                const groundY = 420;
+                // Podlaha NÍŽE - blíž ke spodnímu okraji
+                const groundY = 470;
                 
                 // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 20, 0xff0000, 0);
@@ -94,11 +94,11 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - JEDNODUŠE bez složitých offsetů
+                // Hráč - níže, aby stál na nové podlaze
                 const playerScale = 0.75;
                 
                 // Umístíme ho nad podlahu
-                this.player = this.physics.add.sprite(width / 2, 280, 'rabbit');
+                this.player = this.physics.add.sprite(width / 2, 330, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
