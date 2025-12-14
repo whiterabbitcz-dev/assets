@@ -100,8 +100,9 @@
                 this.player = this.physics.add.sprite(520, groundY - 130, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(0.51); // 260px výška (512 × 0.51 = 261px)
-                this.player.body.setSize(300, 400);
-                this.player.body.setOffset(105, 90);
+                // Hitbox upraven pro scale 0.51 (bylo 0.35)
+                this.player.body.setSize(350, 450); // Větší hitbox
+                this.player.body.setOffset(80, 50); // Upravený offset
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
