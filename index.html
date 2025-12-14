@@ -82,8 +82,8 @@
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha - podle placement (horní okraj oranžového pásu)
-                const groundY = 385; // Výš, aby nohy seděly na oranžovém pásu
+                // Neviditelná podlaha - oranžový pás
+                const groundY = 390;
                 
                 // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
@@ -95,14 +95,15 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - White Rabbit - podle placement obrázku
-                // Začíná těsně nad podlahou
-                this.player = this.physics.add.sprite(520, groundY - 100, 'rabbit');
+                // Hráč - White Rabbit
+                this.player = this.physics.add.sprite(520, 250, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(0.51); // 260px výška
-                // Hitbox - úzký a vysoký, offset aby spodní část byla u nohou
-                this.player.body.setSize(200, 240); // Menší, lépe definovaný hitbox
-                this.player.body.setOffset(155, 250); // Offset k nohám
+                
+                // Hitbox - jednoduchý, centrovaný, menší než sprite
+                // V PŮVODNÍCH pixelech (před škálováním)
+                this.player.body.setSize(256, 400); // Poloviční šířka, většina výšky
+                this.player.body.setOffset(128, 100); // Centrováno
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
