@@ -123,13 +123,10 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - objekty dole na spodním okraji
-                // PNG má objekty dole, musíme ho posunout dolů
+                // Foreground layer - PŘESNĚ stejně jako background (1:1)
+                // Žádné posuny, stejná pozice
                 const fgScale = 0.8;
-                const fgScaledHeight = height * fgScale; // Výška po scale
-                // Posuneme Y tak aby spodek foreground byl u spodku obrazovky
-                const fgY = height - fgScaledHeight / 2;
-                this.foreground = this.add.tileSprite(width / 2, fgY, width / fgScale, height / fgScale, 'bg_foreground');
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width / fgScale, height / fgScale, 'bg_foreground');
                 this.foreground.setScale(fgScale);
                 this.foreground.setDepth(100); // Nad hráčem
                 
