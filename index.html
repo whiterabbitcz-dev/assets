@@ -95,20 +95,19 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - JEŠTĚ VĚTŠÍ
-                const playerScale = 0.75; // Zvětšeno z 0.65
+                // Hráč - větší scale
+                const playerScale = 0.75;
                 const playerHeight = 512 * playerScale; // ~384px
                 
-                // Pozice: 150px zleva
+                // Pozice Y: groundY mínus polovina výšky = centrum sprite
                 this.player = this.physics.add.sprite(150, groundY - playerHeight/2, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - spodek PŘESNĚ na groundY (na červené čáře)
-                // Size: menší hitbox na tělo
-                // Offset Y: posuneme tak, aby offset + size = 512 (konec sprite)
-                this.player.body.setSize(240, 220); // Hitbox na tělo
-                this.player.body.setOffset(136, 292); // 292 + 220 = 512 (spodek u nohou)
+                // Hitbox - jednoduchý přístup: celý sprite, pak ho posuneme
+                // Zmenšíme hitbox na tělo a posuneme ho dolů
+                this.player.body.setSize(180, 180); // Malý čtvercový hitbox
+                this.player.body.setOffset(166, 320); // Offset tak, aby byl u nohou
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -126,9 +125,11 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - ZMENŠEN na 80% (0.8 scale)
-                this.foreground = this.add.tileSprite(width / 2, height / 2, width / 0.8, height / 0.8, 'bg_foreground');
-                this.foreground.setScale(0.8); // Zmenšeno o 20%
+                // Foreground layer - zmenšen na 80%
+                // Když je scale 0.8, musíme zvětšit tileSize aby pokryl celou obrazovku
+                const fgScale = 0.8;
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width / fgScale, height / fgScale, 'bg_foreground');
+                this.foreground.setScale(fgScale);
                 this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
