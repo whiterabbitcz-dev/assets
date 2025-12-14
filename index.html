@@ -95,19 +95,21 @@
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - větší scale
+                // Hráč - UPROSTŘED horizontálně (seamless pozadí)
                 const playerScale = 0.75;
                 
-                // Pozice Y tak, aby SPODEK hitboxu byl na groundY
-                // Hitbox: offset 330, size 180 → spodek je na: playerY + (330 + 180 - 256) = playerY + 254
-                // Chceme: playerY + 254 = groundY → playerY = groundY - 254
-                this.player = this.physics.add.sprite(150, groundY - 254, 'rabbit');
+                // X: střed obrazovky, Y: vypočteno tak aby spodek hitboxu byl na groundY
+                // Spodek hitboxu má být na groundY = 459
+                // Offset + size - 256 = relativní pozice spodku k centru v původních pixelech
+                // (343 + 180 - 256) * 0.75 = 200.25 pixelů pod centrem
+                // playerY = 459 - 200.25 = 258.75
+                this.player = this.physics.add.sprite(width / 2, 259, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - malý čtvercový na tělo, posun dolů
+                // Hitbox - spodek PŘESNĚ na groundY
                 this.player.body.setSize(180, 180);
-                this.player.body.setOffset(166, 330); // Offset dolů, aby spodek byl u nohou
+                this.player.body.setOffset(166, 343); // Offset zvýšen aby spodek seděl na ground
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
