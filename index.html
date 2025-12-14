@@ -59,8 +59,9 @@
             }
             
             preload() {
-                // Načtení assetů
-                this.load.image('bg_level4', 'bg_level4.png');
+                // Načtení assetů - background a foreground
+                this.load.image('bg_background', 'bg_level4_background.png');
+                this.load.image('bg_foreground', 'bg_level4_foreground.png');
                 
                 // Nový spritesheet 6×6 grid (3072×3072px)
                 // Každý frame: 512×512px - pravidelný grid!
@@ -75,34 +76,39 @@
             create() {
                 const { width, height } = this.scale;
                 
-                // Pozadí - TileSprite pro scrollování (NESTRETCH - zachová pixel art)
-                // Výrazně zmenšeno - postavička má být větší než beanbag
-                const bgScale = (height / 1536) * 0.35; // Zmenšeno na 35%
-                this.background = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_level4');
+                // Background layer (dálka) - TileSprite pro scrollování
+                // Rozměry: 1201×529, škálujeme aby seděl na výšku
+                const bgHeight = 529;
+                const bgScale = height / bgHeight; // Fit na výšku obrazovky
+                this.background = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_background');
                 this.background.setScale(bgScale);
                 
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
                 
-                // Neviditelná podlaha - umístěná výše, aby byl králíček vidět  
-                const groundY = height - 250; // Pozice podlahy
+                // Neviditelná podlaha - podle placement obrázku cca uprostřed/spodní část
+                const groundY = height - 180; // Pozice podlahy (upravíme podle placement)
                 
-                // Vytvoření podlahy pomocí graphics (lépe funguje s physics)
+                // Vytvoření podlahy
                 this.ground = this.add.rectangle(width / 2, groundY, width * 2, 50, 0xff0000, 0);
-                this.physics.add.existing(this.ground, true); // Static body
-                this.ground.body.setSize(width * 2, 50); // Nastavení velikosti physics body
+                this.physics.add.existing(this.ground, true);
+                this.ground.body.setSize(width * 2, 50);
                 
                 // Debug zobrazení podlahy
                 if (DEBUG_MODE) {
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - White Rabbit - začíná na podlaze
-                this.player = this.physics.add.sprite(220, groundY - 120, 'rabbit');
+                // Hráč - White Rabbit - podle placement obrázku
+                // Z obrázku vidím že je cca na X=520px, Y=300px z 1201×529
+                const playerXPercent = 520 / 1201; // Relativní pozice
+                const playerYPercent = 300 / 529;
+                
+                this.player = this.physics.add.sprite(width * playerXPercent, height * playerYPercent, 'rabbit');
                 this.player.setCollideWorldBounds(false);
-                this.player.setScale(0.35); // Menší scale protože frame je 512px
-                this.player.body.setSize(300, 400); // Hitbox pro 512px frame
-                this.player.body.setOffset(105, 90); // Offset na nohy
+                this.player.setScale(0.35); // Scale podle placement obrázku
+                this.player.body.setSize(300, 400);
+                this.player.body.setOffset(105, 90);
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -119,6 +125,12 @@
                 
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
+                
+                // Foreground layer (popředí) - PŘES hráče
+                // Scrolluje rychleji než background pro parallax efekt
+                this.foreground = this.add.tileSprite(width / 2, height / 2, width / bgScale, height / bgScale, 'bg_foreground');
+                this.foreground.setScale(bgScale);
+                this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
                 this.cursors = this.input.keyboard.createCursorKeys();
@@ -208,8 +220,9 @@
             update() {
                 if (this.gameOver) return;
                 
-                // Scrollování pozadí doleva
-                this.background.tilePositionX += this.bgScrollSpeed;
+                // Parallax scrollování - background pomaleji, foreground rychleji
+                this.background.tilePositionX += this.bgScrollSpeed * 0.5; // 50% rychlosti
+                this.foreground.tilePositionX += this.bgScrollSpeed * 1.5; // 150% rychlosti
                 
                 // Ovládání skoků
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
