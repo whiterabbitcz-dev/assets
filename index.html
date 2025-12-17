@@ -59,6 +59,7 @@
                 this.maxJumps = 2; // Double jump
                 this.bgScrollSpeed = 3;
                 this.gameOver = false;
+                this.musicStarted = false;
             }
             
             preload() {
@@ -136,9 +137,9 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
 
-                // Hudba na pozadí (loop)
+                // Hudba na pozadí (loop) – spustíme hned, nebo při první interakci (prohlížeč)
                 this.bgMusic = this.sound.add('bg_music', { loop: true, volume: 0.5 });
-                this.bgMusic.play();
+                this.startMusicIfNeeded();
                 
                 // Foreground layer - 1:1 jako background, PŘES vše
                 this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
@@ -150,8 +151,10 @@
                 
                 // Ovládání - Mobile (tap)
                 this.input.on('pointerdown', () => {
+                    this.startMusicIfNeeded();
                     this.jump();
                 });
+                this.input.keyboard.on('keydown', () => this.startMusicIfNeeded());
                 
                 // FPS debug text (volitelné)
                 if (DEBUG_MODE) {
@@ -233,7 +236,8 @@
                 if (this.gameOver) return;
                 
                 // Scrollování pozadí a foreground (delta-based pro konzistentní rychlost)
-                const scrollStep = (delta / 16.67) * this.bgScrollSpeed;
+                const safeDelta = delta || this.game.loop.delta || 16.67;
+                const scrollStep = (safeDelta / 16.67) * this.bgScrollSpeed;
                 this.background.tilePositionX += scrollStep * 0.5; // Background pomalu
                 this.foreground.tilePositionX += scrollStep * 0.7; // Foreground o trochu rychleji
 
@@ -329,6 +333,17 @@
                 // náhodná výška, aby musel skákat / dvojskok
                 bonus.y = Phaser.Math.Between(140, 230);
                 bonus.body.setVelocityY(0);
+            }
+
+            startMusicIfNeeded() {
+                if (this.musicStarted || !this.bgMusic) return;
+                try {
+                    this.bgMusic.play();
+                    this.musicStarted = true;
+                } catch (e) {
+                    // pokud prohlížeč blokuje, zkusíme to příště znovu
+                    this.musicStarted = false;
+                }
             }
 
             createHealthUI() {
