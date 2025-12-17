@@ -414,7 +414,7 @@
             updateObstacles() {
                 if (!this.obstacleGroup) return;
                 const { width } = this.scale;
-                const baseSpeed = this.bgScrollSpeed * 24; // mírně pomalejší než bonusy (90)
+                const baseSpeed = this.bgScrollSpeed * 30; // shodná vizuální rychlost jako background (90 px/s)
                 this.obstacleGroup.children.each(obs => {
                     obs.body.setVelocityX(-baseSpeed);
                     if (obs.x < -100) {
@@ -432,7 +432,7 @@
                 obs.x = width + offset;
                 obs.y = yBase;
                 obs.setOrigin(0.5, 1);
-                obs.body.setVelocityX(-this.bgScrollSpeed * 24);
+                obs.body.setVelocityX(-this.bgScrollSpeed * 30);
             }
 
             handleObstacleHit(obstacle) {
