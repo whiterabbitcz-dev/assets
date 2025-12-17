@@ -54,7 +54,7 @@
                 this.cursors = null;
                 this.jumpCount = 0;
                 this.maxJumps = 2; // Double jump
-                this.bgScrollSpeed = 3;
+                this.bgScrollSpeed = 1.5; // 50% rychlosti (proporcionálně)
                 this.gameOver = false;
             }
             
@@ -76,8 +76,9 @@
             create() {
                 const { width, height } = this.scale;
                 
-                // Background layer - 1:1 bez škálování (1201×529)
+                // Background layer - 50% scale
                 this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
+                this.background.setScale(0.5); // 50% zmenšení
                 
                 // Arcade Physics - 50% gravitace (proporcionálně)
                 this.physics.world.gravity.y = 400;
@@ -123,8 +124,9 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - 1:1 jako background, PŘES vše
+                // Foreground layer - 50% scale, PŘES vše
                 this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
+                this.foreground.setScale(0.5); // 50% zmenšení
                 this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
