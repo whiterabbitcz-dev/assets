@@ -53,6 +53,7 @@
                 this.ground = null;
                 this.bonusGroup = null;
                 this.healthIcons = [];
+                this.bgMusic = null;
                 this.cursors = null;
                 this.jumpCount = 0;
                 this.maxJumps = 2; // Double jump
@@ -67,6 +68,7 @@
                 this.load.image('bonus_heart', 'heart.png');
                 this.load.image('bonus_like', 'like.png');
                 this.load.image('health_icon', 'health.png');
+                this.load.audio('bg_music', 'music.mp3');
                 
                 // Nový spritesheet 6×6 grid (3072×3072px)
                 // Každý frame: 512×512px - pravidelný grid!
@@ -133,6 +135,10 @@
                 
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
+
+                // Hudba na pozadí (loop)
+                this.bgMusic = this.sound.add('bg_music', { loop: true, volume: 0.5 });
+                this.bgMusic.play();
                 
                 // Foreground layer - 1:1 jako background, PŘES vše
                 this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
