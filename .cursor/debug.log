@@ -1,0 +1,25 @@
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"A","location":"index.html:create","message":"scene create init","data":{"width":1201,"height":529,"bgScrollSpeed":3},"timestamp":1765998862800}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"C","location":"index.html:createBonuses","message":"bonuses created","data":{"count":2,"baseSpeed":90},"timestamp":1765998862802}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"D","location":"index.html:startMusicIfNeeded","message":"music started","data":{"volume":1},"timestamp":1765998862804}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"A","location":"index.html:update","message":"first update tick","data":{"delta":8.239999999999998,"safeDelta":8.239999999999998,"scrollStep":1.4829034193161363,"bgScrollSpeed":3,"bgPos":0.7414517096580682,"fgPos":1.0380323935212954},"timestamp":1765998862882}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998867718}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998871043}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998872634}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998874000}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998875193}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998876584}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998881630}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998885272}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998891014}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":2,"velY":-400},"timestamp":1765998891414}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998892647}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":2,"velY":-400},"timestamp":1765998892922}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998894880}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":2,"velY":-400},"timestamp":1765998895322}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765998896972}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":2,"velY":-400},"timestamp":1765998897555}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"A","location":"index.html:create","message":"scene create init","data":{"width":1201,"height":529,"bgScrollSpeed":3},"timestamp":1765998899618}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"C","location":"index.html:createBonuses","message":"bonuses created","data":{"count":2,"baseSpeed":90},"timestamp":1765998899620}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"D","location":"index.html:startMusicIfNeeded","message":"music started","data":{"volume":1},"timestamp":1765998899620}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"A","location":"index.html:update","message":"first update tick","data":{"delta":8.329999999999995,"safeDelta":8.329999999999995,"scrollStep":1.4991001799640062,"bgScrollSpeed":3,"bgPos":0.7495500899820031,"fgPos":1.0493701259748043},"timestamp":1765998899627}
+{"sessionId":"debug-session","runId":"pre-fix","hypothesisId":"B","location":"index.html:jump","message":"jump triggered","data":{"jumpCount":1,"velY":-400},"timestamp":1765999016374}

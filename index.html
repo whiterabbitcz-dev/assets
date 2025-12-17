@@ -54,6 +54,8 @@
                 this.bonusGroup = null;
                 this.healthIcons = [];
                 this.bgMusic = null;
+                this.loggedFirstUpdate = false;
+                this.updateLogAccum = 0;
                 this.cursors = null;
                 this.jumpCount = 0;
                 this.maxJumps = 2; // Double jump
@@ -86,6 +88,9 @@
                 
                 // Background layer - 1:1 bez škálování (1201×529)
                 this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'A',location:'index.html:create',message:'scene create init',data:{width,height,bgScrollSpeed:this.bgScrollSpeed},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
                 
                 // Arcade Physics
                 this.physics.world.gravity.y = 800;
@@ -224,6 +229,9 @@
                 if (this.jumpCount < this.maxJumps) {
                     this.player.setVelocityY(-400);
                     this.jumpCount++;
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'B',location:'index.html:jump',message:'jump triggered',data:{jumpCount:this.jumpCount,velY:this.player.body.velocity.y},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
                     
                     // Přehrání jump animace
                     if (this.player.anims.currentAnim.key !== 'jump') {
@@ -240,6 +248,22 @@
                 const scrollStep = (safeDelta / 16.67) * this.bgScrollSpeed;
                 this.background.tilePositionX += scrollStep * 0.5; // Background pomalu
                 this.foreground.tilePositionX += scrollStep * 0.7; // Foreground o trochu rychleji
+                this.updateLogAccum += safeDelta;
+                if (!this.loggedFirstUpdate) {
+                    this.loggedFirstUpdate = true;
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'A',location:'index.html:update',message:'first update tick',data:{delta,safeDelta,scrollStep,bgScrollSpeed:this.bgScrollSpeed,bgPos:this.background.tilePositionX,fgPos:this.foreground.tilePositionX},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
+                }
+                // Periodický log ~1x za 1s
+                if (this.updateLogAccum >= 1000) {
+                    this.updateLogAccum = 0;
+                    const bonuses = [];
+                    this.bonusGroup?.children.each(b=>bonuses.push({x:b.x,y:b.y,velX:b.body.velocity.x}),this);
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'A',location:'index.html:update',message:'periodic tick',data:{safeDelta,scrollStep,bgPos:this.background.tilePositionX,fgPos:this.foreground.tilePositionX,player:{x:this.player.x,y:this.player.y,velY:this.player.body.velocity.y,onGround:this.player.body.touching.down},bonuses},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
+                }
 
                 // Pohyb bonusů (simulace scrollu) + recyklace
                 this.updateBonuses();
@@ -305,6 +329,9 @@
                     bonus.body.setCollideWorldBounds(false);
                     bonus.body.allowRotation = false;
                 });
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'C',location:'index.html:createBonuses',message:'bonuses created',data:{count:this.bonusGroup.getLength(),baseSpeed:this.bgScrollSpeed*30},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
 
                 // Overlap sebere bonus a hned ho přesune vpravo
                 this.physics.add.overlap(this.player, this.bonusGroup, (player, bonus) => {
@@ -340,9 +367,15 @@
                 try {
                     this.bgMusic.play();
                     this.musicStarted = true;
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'D',location:'index.html:startMusicIfNeeded',message:'music started',data:{volume:this.bgMusic.volume},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
                 } catch (e) {
                     // pokud prohlížeč blokuje, zkusíme to příště znovu
                     this.musicStarted = false;
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'D',location:'index.html:startMusicIfNeeded',message:'music blocked',data:{error:e?.message||'unknown'},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
                 }
             }
 
@@ -366,6 +399,9 @@
                 
                 this.gameOver = true;
                 this.player.anims.play('crash', true);
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'E',location:'index.html:triggerGameOver',message:'game over triggered',data:{playerY:this.player.y},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
                 
                 // Zobrazení Game Over textu
                 const { width, height } = this.scale;
