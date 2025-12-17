@@ -79,33 +79,33 @@
                 // Background layer - 1:1 bez škálování (1201×529)
                 this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
                 
-                // Arcade Physics
-                this.physics.world.gravity.y = 800;
+                // Arcade Physics - 50% gravitace (proporcionálně)
+                this.physics.world.gravity.y = 400;
                 
-                // Podlaha NÍŽE - blíž ke spodnímu okraji
-                const groundY = 470;
+                // Podlaha NÍŽE - 50% výšky (proporcionálně)
+                const groundY = 235;
                 
                 // Vytvoření podlahy
-                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 20, 0xff0000, 0);
+                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 10, 0xff0000, 0);
                 this.physics.add.existing(this.ground, true);
-                this.ground.body.setSize(width * 2, 20);
+                this.ground.body.setSize(width * 2, 10);
                 
                 // Debug zobrazení podlahy
                 if (DEBUG_MODE) {
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - níže, aby stál na nové podlaze
-                const playerScale = 0.75;
+                // Hráč - 50% scale (proporcionálně)
+                const playerScale = 0.375;
                 
-                // Umístíme ho nad podlahu
-                this.player = this.physics.add.sprite(width / 2, 330, 'rabbit');
+                // Umístíme ho nad podlahu (proporcionálně)
+                this.player = this.physics.add.sprite(width / 2, 165, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - ŽÁDNÝ offset, jen zmenšíme
+                // Hitbox - 50% velikosti (proporcionálně)
                 // Phaser automaticky vycentruje hitbox
-                this.player.body.setSize(250, 300); // Větší hitbox, bez offsetu
+                this.player.body.setSize(125, 150); // Poloviční hitbox
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -202,7 +202,7 @@
                 
                 // Kontrola double jump
                 if (this.jumpCount < this.maxJumps) {
-                    this.player.setVelocityY(-400);
+                    this.player.setVelocityY(-200); // 50% velocity (proporcionálně)
                     this.jumpCount++;
                     
                     // Přehrání jump animace
@@ -298,8 +298,8 @@
             scale: {
                 mode: Phaser.Scale.NONE, // Žádné škálování - vždy 1:1
                 autoCenter: Phaser.Scale.CENTER_BOTH,
-                width: 1201,  // Přesné rozměry 1:1
-                height: 529
+                width: 600,  // 50% z původní velikosti (1201 × 0.5)
+                height: 265  // 50% z původní velikosti (529 × 0.5)
             },
             backgroundColor: '#000000', // Černý prostor kolem
             pixelArt: true,
