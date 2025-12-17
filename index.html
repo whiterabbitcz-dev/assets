@@ -136,7 +136,9 @@
                 
                 // Hitbox - ŽÁDNÝ offset, jen zmenšíme
                 // Phaser automaticky vycentruje hitbox
-                this.player.body.setSize(250, 300); // Větší hitbox, bez offsetu
+                // Menší hitbox, posunutý na nohy, aby byl skok tolerantnější
+                this.player.body.setSize(180, 220);
+                this.player.body.setOffset(60, 90);
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -268,7 +270,7 @@
                 const safeDelta = (Number.isFinite(delta) && delta > 0) ? delta :
                                   (Number.isFinite(this.game.loop.delta) && this.game.loop.delta > 0 ? this.game.loop.delta : 16.67);
                 const scrollStep = (safeDelta / 16.67) * this.bgScrollSpeed;
-                this.background.tilePositionX += scrollStep * 0.55; // Background +10% rychleji
+                this.background.tilePositionX += scrollStep * 0.605; // Background o ~10% rychleji než předchozích 0.55
                 this.foreground.tilePositionX += scrollStep * 0.7; // Foreground o trochu rychleji
                 this.updateLogAccum += safeDelta;
                 if (!this.loggedFirstUpdate) {
@@ -414,7 +416,7 @@
             updateObstacles() {
                 if (!this.obstacleGroup) return;
                 const { width } = this.scale;
-                const baseSpeed = this.bgScrollSpeed * 36; // +20% oproti background base (108 px/s při bgScrollSpeed=3)
+                const baseSpeed = this.bgScrollSpeed * 39.6; // +10% nad předchozí (≈118.8 px/s při bgScrollSpeed=3)
                 this.obstacleGroup.children.each(obs => {
                     obs.body.setVelocityX(-baseSpeed);
                     if (obs.x < -100) {
@@ -432,7 +434,7 @@
                 obs.x = width + offset;
                 obs.y = yBase;
                 obs.setOrigin(0.5, 1);
-                obs.body.setVelocityX(-this.bgScrollSpeed * 36);
+                obs.body.setVelocityX(-this.bgScrollSpeed * 39.6);
             }
 
             handleObstacleHit(obstacle) {
