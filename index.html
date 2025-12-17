@@ -93,6 +93,16 @@
             
             create() {
                 const { width, height } = this.scale;
+                // Re-init runtime state on restart
+                this.gameOver = false;
+                this.jumpCount = 0;
+                this.lives = 3;
+                this.invulnerableUntil = 0;
+                this.loggedFirstUpdate = false;
+                this.updateLogAccum = 0;
+                this.bgScrollSpeed = 3;
+                this.musicStarted = false;
+                this.sound.stopAll();
                 
                 // Background layer - 1:1 bez škálování (1201×529)
                 this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
@@ -255,7 +265,8 @@
                 if (this.gameOver) return;
                 
                 // Scrollování pozadí a foreground (delta-based pro konzistentní rychlost)
-                const safeDelta = delta || this.game.loop.delta || 16.67;
+                const safeDelta = (Number.isFinite(delta) && delta > 0) ? delta :
+                                  (Number.isFinite(this.game.loop.delta) && this.game.loop.delta > 0 ? this.game.loop.delta : 16.67);
                 const scrollStep = (safeDelta / 16.67) * this.bgScrollSpeed;
                 this.background.tilePositionX += scrollStep * 0.5; // Background pomalu
                 this.foreground.tilePositionX += scrollStep * 0.7; // Foreground o trochu rychleji
@@ -403,7 +414,7 @@
             updateObstacles() {
                 if (!this.obstacleGroup) return;
                 const { width } = this.scale;
-                const baseSpeed = this.bgScrollSpeed * 30 * 0.7;
+                const baseSpeed = this.bgScrollSpeed * 24; // mírně pomalejší než bonusy (90)
                 this.obstacleGroup.children.each(obs => {
                     obs.body.setVelocityX(-baseSpeed);
                     if (obs.x < -100) {
@@ -421,7 +432,7 @@
                 obs.x = width + offset;
                 obs.y = yBase;
                 obs.setOrigin(0.5, 1);
-                obs.body.setVelocityX(-this.bgScrollSpeed * 30 * 0.7);
+                obs.body.setVelocityX(-this.bgScrollSpeed * 24);
             }
 
             handleObstacleHit(obstacle) {
