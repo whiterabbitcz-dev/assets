@@ -54,7 +54,7 @@
                 this.cursors = null;
                 this.jumpCount = 0;
                 this.maxJumps = 2; // Double jump
-                this.bgScrollSpeed = 1.5; // 50% rychlosti (proporcionálně)
+                this.bgScrollSpeed = 3;
                 this.gameOver = false;
             }
             
@@ -76,37 +76,36 @@
             create() {
                 const { width, height } = this.scale;
                 
-                // Background layer - 50% scale
+                // Background layer - 1:1 bez škálování (1201×529)
                 this.background = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_background');
-                this.background.setScale(0.5); // 50% zmenšení
                 
-                // Arcade Physics - 50% gravitace (proporcionálně)
-                this.physics.world.gravity.y = 400;
+                // Arcade Physics
+                this.physics.world.gravity.y = 800;
                 
-                // Podlaha NÍŽE - 50% výšky (proporcionálně)
-                const groundY = 235;
+                // Podlaha NÍŽE - blíž ke spodnímu okraji
+                const groundY = 470;
                 
                 // Vytvoření podlahy
-                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 10, 0xff0000, 0);
+                this.ground = this.add.rectangle(width / 2, groundY, width * 2, 20, 0xff0000, 0);
                 this.physics.add.existing(this.ground, true);
-                this.ground.body.setSize(width * 2, 10);
+                this.ground.body.setSize(width * 2, 20);
                 
                 // Debug zobrazení podlahy
                 if (DEBUG_MODE) {
                     this.ground.setFillStyle(0xff0000, 0.3);
                 }
                 
-                // Hráč - 50% scale (proporcionálně)
-                const playerScale = 0.375;
+                // Hráč - níže, aby stál na nové podlaze
+                const playerScale = 0.75;
                 
-                // Umístíme ho nad podlahu (proporcionálně)
-                this.player = this.physics.add.sprite(width / 2, 165, 'rabbit');
+                // Umístíme ho nad podlahu
+                this.player = this.physics.add.sprite(width / 2, 330, 'rabbit');
                 this.player.setCollideWorldBounds(false);
                 this.player.setScale(playerScale);
                 
-                // Hitbox - 50% velikosti (proporcionálně)
+                // Hitbox - ŽÁDNÝ offset, jen zmenšíme
                 // Phaser automaticky vycentruje hitbox
-                this.player.body.setSize(125, 150); // Poloviční hitbox
+                this.player.body.setSize(250, 300); // Větší hitbox, bez offsetu
                 
                 // Debug rámečky
                 if (DEBUG_MODE) {
@@ -124,9 +123,8 @@
                 // Spuštění běhací animace
                 this.player.anims.play('run', true);
                 
-                // Foreground layer - 50% scale, PŘES vše
+                // Foreground layer - 1:1 jako background, PŘES vše
                 this.foreground = this.add.tileSprite(width / 2, height / 2, width, height, 'bg_foreground');
-                this.foreground.setScale(0.5); // 50% zmenšení
                 this.foreground.setDepth(100); // Nad hráčem
                 
                 // Ovládání - Desktop
@@ -204,7 +202,7 @@
                 
                 // Kontrola double jump
                 if (this.jumpCount < this.maxJumps) {
-                    this.player.setVelocityY(-200); // 50% velocity (proporcionálně)
+                    this.player.setVelocityY(-400);
                     this.jumpCount++;
                     
                     // Přehrání jump animace
@@ -300,8 +298,8 @@
             scale: {
                 mode: Phaser.Scale.NONE, // Žádné škálování - vždy 1:1
                 autoCenter: Phaser.Scale.CENTER_BOTH,
-                width: 600,  // 50% z původní velikosti (1201 × 0.5)
-                height: 265  // 50% z původní velikosti (529 × 0.5)
+                width: 1201,  // Přesné rozměry 1:1
+                height: 529
             },
             backgroundColor: '#000000', // Černý prostor kolem
             pixelArt: true,
