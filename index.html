@@ -51,6 +51,8 @@
                 this.player = null;
                 this.background = null;
                 this.ground = null;
+                this.bonusGroup = null;
+                this.healthIcons = [];
                 this.cursors = null;
                 this.jumpCount = 0;
                 this.maxJumps = 2; // Double jump
@@ -62,6 +64,9 @@
                 // Načtení assetů - dlouhý seamless background
                 this.load.image('bg_background', 'bg_game.png');
                 this.load.image('bg_foreground', 'bg_level4_foreground.png');
+                this.load.image('bonus_heart', 'heart.png');
+                this.load.image('bonus_like', 'like.png');
+                this.load.image('health_icon', 'health.png');
                 
                 // Nový spritesheet 6×6 grid (3072×3072px)
                 // Každý frame: 512×512px - pravidelný grid!
@@ -116,6 +121,12 @@
                 this.physics.add.collider(this.player, this.ground, () => {
                     this.jumpCount = 0; // Reset skoků při dotyku se zemí
                 });
+
+                // Bonusy (heart, like) - musí se vyskočit/dvojskok
+                this.createBonuses();
+
+                // UI indikátor životů (statický, bez logiky)
+                this.createHealthUI();
                 
                 // Animace
                 this.createAnimations();
@@ -218,6 +229,9 @@
                 // Scrollování pozadí a foreground
                 this.background.tilePositionX += this.bgScrollSpeed * 0.5; // Background pomalu
                 this.foreground.tilePositionX += this.bgScrollSpeed * 0.7; // Foreground o trochu rychleji
+
+                // Pohyb bonusů (simulace scrollu) + recyklace
+                this.updateBonuses();
                 
                 // Ovládání skoků
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
@@ -255,6 +269,66 @@
                 // Detekce pádu mimo obrazovku - jen pokud spadne HODNĚ dole
                 if (this.player.y > this.scale.height + 300) {
                     this.triggerGameOver();
+                }
+            }
+
+            createBonuses() {
+                const { width } = this.scale;
+                const baseSpeed = this.bgScrollSpeed * 30; // párujeme s vizuálním scrollováním
+                const bonusConfigs = [
+                    { key: 'bonus_heart', x: width * 0.9, y: 210, scale: 1.0 },
+                    { key: 'bonus_like',  x: width * 1.2, y: 170, scale: 1.0 }
+                ];
+
+                this.bonusGroup = this.physics.add.group();
+                bonusConfigs.forEach(cfg => {
+                    const bonus = this.bonusGroup.create(cfg.x, cfg.y, cfg.key);
+                    bonus.setScale(cfg.scale);
+                    bonus.setOrigin(0.5, 0.5);
+                    bonus.setImmovable(true);
+                    bonus.setAllowGravity(false);
+                    bonus.body.setVelocityX(-baseSpeed);
+                });
+
+                // Overlap sebere bonus a hned ho přesune vpravo
+                this.physics.add.overlap(this.player, this.bonusGroup, (player, bonus) => {
+                    this.recycleBonus(bonus);
+                });
+            }
+
+            updateBonuses() {
+                const { width } = this.scale;
+                const baseSpeed = this.bgScrollSpeed * 30;
+                this.bonusGroup.children.each(bonus => {
+                    // udržuj rychlost synchronizovanou s bgScrollSpeed
+                    bonus.body.setVelocityX(-baseSpeed);
+                    // pokud odjede vlevo, recykluj vpravo
+                    if (bonus.x < -50) {
+                        this.recycleBonus(bonus);
+                    }
+                }, this);
+            }
+
+            recycleBonus(bonus) {
+                const { width } = this.scale;
+                const offset = Phaser.Math.Between(200, 400);
+                bonus.x = width + offset;
+                // náhodná výška, aby musel skákat / dvojskok
+                bonus.y = Phaser.Math.Between(140, 230);
+            }
+
+            createHealthUI() {
+                const { width } = this.scale;
+                const top = 20;
+                const size = 40;
+                const spacing = 10;
+                this.healthIcons = [];
+                for (let i = 0; i < 3; i++) {
+                    const icon = this.add.image(width - (size + spacing) * (3 - i) + spacing, top + size / 2, 'health_icon');
+                    icon.setOrigin(0.5, 0.5);
+                    icon.setDisplaySize(size, size);
+                    icon.setScrollFactor(0); // UI fixní k obrazovce
+                    this.healthIcons.push(icon);
                 }
             }
             
