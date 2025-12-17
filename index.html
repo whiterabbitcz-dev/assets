@@ -229,12 +229,13 @@
                 }
             }
             
-            update() {
+            update(time, delta) {
                 if (this.gameOver) return;
                 
-                // Scrollování pozadí a foreground
-                this.background.tilePositionX += this.bgScrollSpeed * 0.5; // Background pomalu
-                this.foreground.tilePositionX += this.bgScrollSpeed * 0.7; // Foreground o trochu rychleji
+                // Scrollování pozadí a foreground (delta-based pro konzistentní rychlost)
+                const scrollStep = (delta / 16.67) * this.bgScrollSpeed;
+                this.background.tilePositionX += scrollStep * 0.5; // Background pomalu
+                this.foreground.tilePositionX += scrollStep * 0.7; // Foreground o trochu rychleji
 
                 // Pohyb bonusů (simulace scrollu) + recyklace
                 this.updateBonuses();
