@@ -52,6 +52,7 @@
                 this.background = null;
                 this.ground = null;
                 this.bonusGroup = null;
+                this.obstacleGroup = null;
                 this.healthIcons = [];
                 this.bgMusic = null;
                 this.loggedFirstUpdate = false;
@@ -62,6 +63,8 @@
                 this.bgScrollSpeed = 3;
                 this.gameOver = false;
                 this.musicStarted = false;
+                this.lives = 3;
+                this.invulnerableUntil = 0;
             }
             
             preload() {
@@ -72,6 +75,11 @@
                 this.load.image('bonus_like', 'like.png');
                 this.load.image('health_icon', 'health.png');
                 this.load.audio('bg_music', 'music.mp3');
+                this.load.image('obstacle_1', 'obstacle_1.png');
+                this.load.image('obstacle_2', 'obstacle_2.png');
+                this.load.image('obstacle_3', 'obstacle_3.png');
+                this.load.image('obstacle_4', 'obstacle_4.png');
+                this.load.image('obstacle_5', 'obstacle_5.png');
                 
                 // Nový spritesheet 6×6 grid (3072×3072px)
                 // Každý frame: 512×512px - pravidelný grid!
@@ -132,6 +140,9 @@
 
                 // Bonusy (heart, like) - musí se vyskočit/dvojskok
                 this.createBonuses();
+
+                // Obstacles - náhodně, na zemi
+                this.createObstacles();
 
                 // UI indikátor životů (statický, bez logiky)
                 this.createHealthUI();
@@ -267,6 +278,9 @@
 
                 // Pohyb bonusů (simulace scrollu) + recyklace
                 this.updateBonuses();
+
+                // Pohyb a recyklace překážek
+                this.updateObstacles();
                 
                 // Ovládání skoků
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || 
@@ -339,6 +353,30 @@
                 });
             }
 
+            createObstacles() {
+                const { width } = this.scale;
+                const baseSpeed = this.bgScrollSpeed * 30;
+                const obstacleKeys = ['obstacle_1', 'obstacle_2', 'obstacle_3', 'obstacle_4', 'obstacle_5'];
+                this.obstacleGroup = this.physics.add.group({
+                    allowGravity: false,
+                    immovable: true
+                });
+                const spawnX = [width * 1.0, width * 1.4, width * 1.8];
+                spawnX.forEach(xPos => {
+                    const key = Phaser.Utils.Array.GetRandom(obstacleKeys);
+                    const obs = this.obstacleGroup.create(xPos, 470, key);
+                    obs.setOrigin(0.5, 1);
+                    obs.body.setAllowGravity(false);
+                    obs.body.setVelocityX(-baseSpeed * 0.7); // pomalejší než bonusy
+                    obs.body.setCollideWorldBounds(false);
+                    obs.body.allowRotation = false;
+                });
+
+                this.physics.add.overlap(this.player, this.obstacleGroup, (player, obstacle) => {
+                    this.handleObstacleHit(obstacle);
+                });
+            }
+
             updateBonuses() {
                 const { width } = this.scale;
                 const baseSpeed = this.bgScrollSpeed * 30;
@@ -360,6 +398,70 @@
                 // náhodná výška, aby musel skákat / dvojskok
                 bonus.y = Phaser.Math.Between(140, 230);
                 bonus.body.setVelocityY(0);
+            }
+
+            updateObstacles() {
+                if (!this.obstacleGroup) return;
+                const { width } = this.scale;
+                const baseSpeed = this.bgScrollSpeed * 30 * 0.7;
+                this.obstacleGroup.children.each(obs => {
+                    obs.body.setVelocityX(-baseSpeed);
+                    if (obs.x < -100) {
+                        this.recycleObstacle(obs);
+                    }
+                }, this);
+            }
+
+            recycleObstacle(obs) {
+                const { width } = this.scale;
+                const obstacleKeys = ['obstacle_1', 'obstacle_2', 'obstacle_3', 'obstacle_4', 'obstacle_5'];
+                const offset = Phaser.Math.Between(250, 450);
+                const yBase = 470;
+                obs.setTexture(Phaser.Utils.Array.GetRandom(obstacleKeys));
+                obs.x = width + offset;
+                obs.y = yBase;
+                obs.setOrigin(0.5, 1);
+                obs.body.setVelocityX(-this.bgScrollSpeed * 30 * 0.7);
+            }
+
+            handleObstacleHit(obstacle) {
+                const now = this.time.now;
+                if (now < this.invulnerableUntil || this.gameOver) return;
+                this.invulnerableUntil = now + 1000;
+                this.lives = Math.max(0, this.lives - 1);
+
+                // Player blink
+                this.tweens.add({
+                    targets: this.player,
+                    alpha: { from: 0.3, to: 1 },
+                    duration: 100,
+                    repeat: 5
+                });
+
+                // Health icon blink + make lost one transparent
+                const idx = 3 - this.lives - 1; // index ztracené (0-based)
+                const icon = this.healthIcons[idx];
+                if (icon) {
+                    this.tweens.add({
+                        targets: icon,
+                        alpha: { from: 0.2, to: 1 },
+                        duration: 120,
+                        repeat: 3,
+                        onComplete: () => icon.setAlpha(0.3)
+                    });
+                }
+
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/e634f921-8b0c-4f1a-8da9-996be4986b0e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'F',location:'index.html:handleObstacleHit',message:'obstacle hit',data:{lives:this.lives,obstacleX:obstacle.x,obstacleY:obstacle.y},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
+
+                if (this.lives <= 0) {
+                    this.triggerGameOver();
+                    return;
+                }
+
+                // Recycle obstacle after hit
+                this.recycleObstacle(obstacle);
             }
 
             startMusicIfNeeded() {
